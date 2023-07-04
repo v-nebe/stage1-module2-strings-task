@@ -1,5 +1,9 @@
 package com.epam.mjc;
 
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.StringTokenizer;
+
 public class MethodParser {
 
     /**
@@ -20,6 +24,41 @@ public class MethodParser {
      * @return {@link MethodSignature} object filled with parsed values from source string
      */
     public MethodSignature parseFunction(String signatureString) {
-        throw new UnsupportedOperationException("You should implement this method.");
+        ArrayList<String> strings = new ArrayList<>();
+
+        StringTokenizer tokenizer = new StringTokenizer(signatureString, " (,)");
+        while (tokenizer.hasMoreTokens()){
+            strings.add(tokenizer.nextToken());
+        }
+
+        boolean hasAccessModifier = true;
+        if (!Objects.equals(strings.get(0), "protected")
+                && !Objects.equals(strings.get(0), "public")
+                && !Objects.equals(strings.get(0), "private")) {
+            hasAccessModifier = false;
+        }
+
+        ArrayList <MethodSignature.Argument> arguments = new ArrayList<>();
+        if(signatureString.indexOf("(")+1 != signatureString.indexOf(")")){
+            System.out.println(strings.size());
+            for(int i = hasAccessModifier ? 3 : 2; i<strings.size()-1; i+=2){
+                System.out.println(arguments.toString());
+                arguments.add(new MethodSignature.Argument(strings.get(i), strings.get(i+1)));
+            }
+        }
+
+        System.out.println(arguments.toString());
+        MethodSignature methodSignature;
+        if(hasAccessModifier){
+            methodSignature= new MethodSignature(strings.get(2), arguments);
+            methodSignature.setAccessModifier(strings.get(0));
+            methodSignature.setReturnType(strings.get(1));
+        }else {
+            methodSignature = new MethodSignature(strings.get(1),arguments);
+            methodSignature.setReturnType(strings.get(0));
+        }
+
+        return methodSignature;
+        //throw new UnsupportedOperationException("You should implement this method.");
     }
 }
